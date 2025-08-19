@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Excellence Quiz Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #1a56db;
+            --secondary: #0e2a6e;
+            --accent: #ff6b35;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7ec 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .school-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .school-info {
+            text-align: left;
+        }
+
+        .school-name {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 5px;
+        }
+
+        .school-motto {
+            font-size: 16px;
+            font-style: italic;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .school-details {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .app-title {
+            margin-top: 20px;
+            font-size: 32px;
+            color: var(--secondary);
+            position: relative;
+            display: inline-block;
+        }
+
+        .app-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-title {
+            font-size: 24px;
+            color: var(--secondary);
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title i {
+            color: var(--primary);
+        }
+
+        .student-info-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.1);
+        }
+
+        .subjects-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .subject-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .subject-card:hover {
+            border-color: var(--primary);
+            background: #e8f0ff;
+        }
+
+        .subject-card.selected {
+            border-color: var(--primary);
+            background: #d6e4ff;
+            box-shadow: 0 5px 15px rgba(26, 86, 219, 0.15);
+        }
+
+        .subject-card.selected::after {
+            content: '✓';
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 30px;
+            height: 30px;
+            background: var(--success);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .subject-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .subject-name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 5px 15px rgba(26, 86, 219, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(26, 86, 219, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: #e8f0ff;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #1e7e34);
+            color: white;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .active-section {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .quiz-info {
+            display: flex;
+            gap: 20px;
+            font-size: 16px;
+        }
+
+        .quiz-info div {
+            background: #f1f5f9;
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+
+        .question-container {
+            margin: 30px 0;
+        }
+
+        .question-text {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .option {
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 17px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .option:hover {
+            background: #f8f9fa;
+            border-color: #ced4da;
+        }
+
+        .option.selected {
+            border-color: var(--primary);
+            background: #e8f0ff;
+        }
+
+        .option-letter {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .option.selected .option-letter {
+            background: var(--primary);
+            color: white;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            padding: 40px;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .result-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .result-title {
+            font-size: 32px;
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+
+        .result-subtitle {
+            font-size: 18px;
+            color: #555;
+        }
+
+        .student-details {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 30px 0;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .detail-item {
+            text-align: center;
+        }
+
+        .detail-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .score-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 40px 0;
+        }
+
+        .score-card {
+            padding: 20px;
+            border-radius: 15px;
+            width: 200px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .overall-score {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .percentage-score {
+            background: linear-gradient(135deg, var(--success), #1e7e34);
+            color: white;
+        }
+
+        .score-label {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .score-value {
+            font-size: 42px;
+            font-weight: 700;
+        }
+
+        .score-description {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .subject-results {
+            margin: 30px 0;
+        }
+
+        .subject-result {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            align-items: center;
+        }
+
+        .subject-result:last-child {
+            border-bottom: none;
+        }
+
+        .subject-result-name {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subject-result-score {
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--success);
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .summary {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .summary-title {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+
+        .summary-text {
+            line-height: 1.6;
+            color: #444;
+        }
+
+        .highlight {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .selected-count {
+            margin-top: 10px;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .error-message {
+            color: var(--danger);
+            margin-top: 10px;
+            font-weight: 600;
+            display: none;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .student-info-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .score-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            
+            .student-details {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .subjects-container {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="school-header">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="school-info">
+                    <h1 class="school-name">Prestige Academy</h1>
+                    <p class="school-motto">Knowledge, Integrity, Excellence</p>
+                    <p class="school-details">123 Education Boulevard, Academic City | Phone: (555) 123-4567 | Email: info@prestigeacademy.edu</p>
+                </div>
+            </div>
+            <h2 class="app-title">Comprehensive Subject Quiz Portal</h2>
+        </header>
+
+        <main>
+            <!-- Student Information Section -->
+            <section id="student-section" class="section active-section">
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-user-graduate"></i> Student Information</h2>
+                    <div class="student-info-form">
+                        <div class="form-group">
+                            <label for="student-name">Full Name</label>
+                            <input type="text" id="student-name" placeholder="Enter your full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="student-id">Student ID</label>
+                            <input type="text" id="student-id" placeholder="Enter your student ID">
+                        </div>
+                        <div class="form-group">
+                            <label for="student-grade">Grade/Class</label>
+                            <select id="student-grade">
+                                <option value="">Select your grade/class</option>
+                                <option value="Grade 10">Grade 10</option>
+                                <option value="Grade 11">Grade 11</option>
+                                <option value="Grade 12">Grade 12</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="student-section">Section</label>
+                            <input type="text" id="student-section" placeholder="Enter your section">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button id="next-to-subjects" class="btn btn-primary">
+                        <i class="fas fa-arrow-right"></i> Continue to Subject Selection
+                    </button>
+                </div>
+            </section>
+
+            <!-- Subject Selection Section -->
+            <section id="subject-section" class="section">
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-book-open"></i> Select Subjects</h2>
+                    <p>Please select at least 11 subjects for your examination. You may select up to 19 subjects.</p>
+                    
+                    <div class="subjects-container" id="subjects-container">
+                        <!-- Subjects will be populated by JavaScript -->
+                    </div>
+                    
+                    <div class="selected-count">Selected: <span id="selected-count">0</span>/11</div>
+                    <div id="subject-error" class="error-message">Please select at least 11 subjects to proceed.</div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button id="back-to-student" class="btn btn-outline">
+                        <i class="fas fa-arrow-left"></i> Back to Student Info
+                    </button>
+                    <button id="start-exam" class="btn btn-primary" disabled>
+                        <i class="fas fa-play"></i> Start Exam
+                    </button>
+                </div>
+            </section>
+
+            <!-- Quiz Section -->
+            <section id="quiz-section" class="section">
+                <div class="card">
+                    <div class="quiz-header">
+                        <h2 class="card-title"><i class="fas fa-pencil-alt"></i> Examination</h2>
+                        <div class="quiz-info">
+                            <div>Subject: <span id="current-subject">Mathematics</span></div>
+                            <div>Question: <span id="current-question">1</span>/5</div>
+                            <div>Time: <span id="timer">15:00</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="question-container">
+                        <div class="question-text" id="question-text">
+                            <!-- Question will be populated by JavaScript -->
+                        </div>
+                        
+                        <div class="options-container" id="options-container">
+                            <!-- Options will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div class="navigation-buttons">
+                        <button id="prev-question" class="btn btn-outline">
+                            <i class="fas fa-arrow-left"></i> Previous
+                        </button>
+                        <button id="next-question" class="btn btn-primary">
+                            Next <i class="fas fa-arrow-right"></i>
+                        </button>
+                        <button id="finish-subject" class="btn btn-success">
+                            <i class="fas fa-flag-checkered"></i> Finish Subject
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section id="result-section" class="section">
+                <div class="result-card">
+                    <div class="result-header">
+                        <div class="logo" style="margin: 0 auto 20px;">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h2 class="result-title">Examination Results</h2>
+                        <p class="result-subtitle">Prestige Academy - Comprehensive Subject Assessment</p>
+                    </div>
+                    
+                    <div class="student-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Student Name</div>
+                            <div class="detail-value" id="result-name">John Doe</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Student ID</div>
+                            <div class="detail-value" id="result-id">S123456</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Grade/Class</div>
+                            <div class="detail-value" id="result-grade">Grade 11</div>
+                        </div>
+                    </div>
+                    
+                    <div class="score-container">
+                        <div class="score-card overall-score">
+                            <div class="score-label">Overall Score</div>
+                            <div class="score-value" id="overall-score">0</div>
+                            <div class="score-description">out of 55</div>
+                        </div>
+                        <div class="score-card percentage-score">
+                            <div class="score-label">Percentage</div>
+                            <div class="score-value" id="percentage-score">0%</div>
+                            <div class="score-description">Performance</div>
+                        </div>
+                    </div>
+                    
+                    <div class="subject-results">
+                        <h3 style="margin-bottom: 20px; color: var(--secondary);">Subject-wise Performance</h3>
+                        <div id="subject-results-container">
+                            <!-- Subject results will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div class="summary">
+                        <h3 class="summary-title">Performance Summary</h3>
+                        <p class="summary-text">
+                            You completed <span class="highlight" id="summary-count">11</span> subjects with an overall score of 
+                            <span class="highlight" id="summary-score">0</span> out of 55. Your performance is 
+                            <span class="highlight" id="summary-performance">Satisfactory</span>. 
+                            You performed exceptionally well in <span class="highlight" id="summary-strong">Mathematics</span>, 
+                            while <span class="highlight" id="summary-weak">History</span> could use more focus.
+                        </p>
+                    </div>
+                    
+                    <div class="action-buttons" style="margin-top: 30px;">
+                        <button id="download-excel" class="btn btn-success">
+                            <i class="fas fa-file-excel"></i> Download Results (Excel)
+                        </button>
+                        <button id="restart-exam" class="btn btn-primary">
+                            <i class="fas fa-redo"></i> Take Another Exam
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>© 2023 Prestige Academy - Comprehensive Subject Quiz Portal | All rights reserved</p>
+            <p>Designed for Academic Excellence and Student Assessment</p>
+        </footer>
+    </div>
+
+    <script>
+        // Sample data for the application
+        const subjects = [
+            { id: 1, name: "Mathematics", icon: "fas fa-calculator" },
+            { id: 2, name: "Physics", icon: "fas fa-atom" },
+            { id: 3, name: "Chemistry", icon: "fas fa-flask" },
+            { id: 4, name: "Biology", icon: "fas fa-dna" },
+            { id: 5, name: "English", icon: "fas fa-book" },
+            { id: 6, name: "History", icon: "fas fa-landmark" },
+            { id: 7, name: "Geography", icon: "fas fa-globe-americas" },
+            { id: 8, name: "Computer Science", icon: "fas fa-laptop-code" },
+            { id: 9, name: "Economics", icon: "fas fa-chart-line" },
+            { id: 10, name: "Business Studies", icon: "fas fa-briefcase" },
+            { id: 11, name: "Art", icon: "fas fa-palette" },
+            { id: 12, name: "Music", icon: "fas fa-music" },
+            { id: 13, name: "Physical Education", icon: "fas fa-running" },
+            { id: 14, name: "Psychology", icon: "fas fa-brain" },
+            { id: 15, name: "Sociology", icon: "fas fa-users" },
+            { id: 16, name: "Foreign Language", icon: "fas fa-language" },
+            { id: 17, name: "Literature", icon: "fas fa-book-reader" },
+            { id: 18, name: "Philosophy", icon: "fas fa-brain" },
+            { id: 19, name: "Political Science", icon: "fas fa-university" }
+        ];
+
+        // Sample questions for the quiz
+        const questions = {
+            "Mathematics": [
+                {
+                    question: "What is the derivative of x²?",
+                    options: ["x", "2x", "x²", "2"],
+                    answer: 1
+                },
+                {
+                    question: "What is the value of π (pi) approximately?",
+                    options: ["3.14", "2.71", "1.618", "1.414"],
+                    answer: 0
+                },
+                {
+                    question: "Solve for x: 2x + 5 = 15",
+                    options: ["5", "10", "7.5", "7"],
+                    answer: 0
+                },
+                {
+                    question: "What is the area of a circle with radius 5?",
+                    options: ["10π", "25π", "50π", "100π"],
+                    answer: 1
+                },
+                {
+                    question: "What is the formula for the Pythagorean theorem?",
+                    options: ["a² + b² = c²", "a + b = c", "a × b = c", "a/b = c"],
+                    answer: 0
+                }
+            ],
+            "Physics": [
+                {
+                    question: "What is the SI unit of force?",
+                    options: ["Joule", "Newton", "Watt", "Pascal"],
+                    answer: 1
+                },
+                {
+                    question: "What is the speed of light in vacuum?",
+                    options: ["300,000 km/s", "150,000 km/s", "1,080,000 km/h", "670,616,629 mph"],
+                    answer: 0
+                },
+                {
+                    question: "Which law states that every action has an equal and opposite reaction?",
+                    options: ["Newton's 1st Law", "Newton's 2nd Law", "Newton's 3rd Law", "Law of Gravitation"],
+                    answer: 2
+                },
+                {
+                    question: "What is the formula for kinetic energy?",
+                    options: ["mgh", "½mv²", "Fd", "mc²"],
+                    answer: 1
+                },
+                {
+                    question: "Which subatomic particle has a positive charge?",
+                    options: ["Electron", "Neutron", "Proton", "Photon"],
+                    answer: 2
+                }
+            ],
+            "Chemistry": [
+                {
+                    question: "What is the chemical symbol for gold?",
+                    options: ["Go", "Gd", "Au", "Ag"],
+                    answer: 2
+                },
+                {
+                    question: "What is the pH value of pure water?",
+                    options: ["0", "7", "14", "10"],
+                    answer: 1
+                },
+                {
+                    question: "What is the lightest element?",
+                    options: ["Helium", "Hydrogen", "Oxygen", "Lithium"],
+                    answer: 1
+                },
+                {
+                    question: "What does the atomic number represent?",
+                    options: ["Number of protons", "Number of neutrons", "Number of electrons", "Atomic mass"],
+                    answer: 0
+                },
+                {
+                    question: "What is the main component of natural gas?",
+                    options: ["Ethane", "Propane", "Butane", "Methane"],
+                    answer: 3
+                }
+            ]
+            // In a real app, questions for all subjects would be defined here
+        };
+
+        // App state
+        const state = {
+            student: {
+                name: "",
+                id: "",
+                grade: "",
+                section: ""
+            },
+            selectedSubjects: [],
+            currentSubjectIndex: 0,
+            currentQuestionIndex: 0,
+            answers: {},
+            results: {},
+            timer: null,
+            timeRemaining: 15 * 60 // 15 minutes per subject
+        };
+
+        // DOM Elements
+        const sections = {
+            student: document.getElementById('student-section'),
+            subject: document.getElementById('subject-section'),
+            quiz: document.getElementById('quiz-section'),
+            result: document.getElementById('result-section')
+        };
+
+        // Initialize the app
+        function initApp() {
+            renderSubjects();
+            setupEventListeners();
+        }
+
+        // Render subjects to the subject selection section
+        function renderSubjects() {
+            const container = document.getElementById('subjects-container');
+            container.innerHTML = '';
+            
+            subjects.forEach(subject => {
+                const subjectElement = document.createElement('div');
+                subjectElement.className = 'subject-card';
+                subjectElement.innerHTML = `
+                    <div class="subject-icon"><i class="${subject.icon}"></i></div>
+                    <div class="subject-name">${subject.name}</div>
+                `;
+                
+                subjectElement.addEventListener('click', () => {
+                    toggleSubjectSelection(subject.id);
+                });
+                
+                container.appendChild(subjectElement);
+            });
+        }
+
+        // Toggle subject selection
+        function toggleSubjectSelection(subjectId) {
+            const index = state.selectedSubjects.indexOf(subjectId);
+            const selectedCount = document.getElementById('selected-count');
+            
+            if (index === -1) {
+                // Add subject if not already selected
+                state.selectedSubjects.push(subjectId);
+            } else {
+                // Remove subject if already selected
+                state.selectedSubjects.splice(index, 1);
+            }
+            
+            // Update UI
+            const subjectCards = document.querySelectorAll('.subject-card');
+            subjectCards.forEach((card, idx) => {
+                if (state.selectedSubjects.includes(subjects[idx].id)) {
+                    card.classList.add('selected');
+                } else {
+                    card.classList.remove('selected');
+                }
+            });
+            
+            selectedCount.textContent = state.selectedSubjects.length;
+            
+            // Update button state
+            document.getElementById('start-exam').disabled = state.selectedSubjects.length < 11;
+            document.getElementById('subject-error').style.display = 
+                state.selectedSubjects.length < 11 ? 'block' : 'none';
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Navigation buttons
+            document.getElementById('next-to-subjects').addEventListener('click', goToSubjects);
+            document.getElementById('back-to-student').addEventListener('click', goToStudentInfo);
+            document.getElementById('start-exam').addEventListener('click', startExam);
+            document.getElementById('prev-question').addEventListener('click', prevQuestion);
+            document.getElementById('next-question').addEventListener('click', nextQuestion);
+            document.getElementById('finish-subject').addEventListener('click', finishSubject);
+            document.getElementById('restart-exam').addEventListener('click', restartExam);
+            document.getElementById('download-excel').addEventListener('click', downloadExcel);
+        }
+
+        // Go to subject selection
+        function goToSubjects() {
+            // Validate student info
+            state.student.name = document.getElementById('student-name').value;
+            state.student.id = document.getElementById('student-id').value;
+            state.student.grade = document.getElementById('student-grade').value;
+            state.student.section = document.getElementById('student-section').value;
+            
+            if (!state.student.name || !state.student.id || !state.student.grade || !state.student.section) {
+                alert('Please fill in all student information fields.');
+                return;
+            }
+            
+            // Switch to subject section
+            sections.student.classList.remove('active-section');
+            sections.subject.classList.add('active-section');
+        }
+
+        // Go back to student info
+        function goToStudentInfo() {
+            sections.subject.classList.remove('active-section');
+            sections.student.classList.add('active-section');
+        }
+
+        // Start the exam
+        function startExam() {
+            if (state.selectedSubjects.length < 11) {
+                document.getElementById('subject-error').style.display = 'block';
+                return;
+            }
+            
+            // Initialize exam state
+            state.currentSubjectIndex = 0;
+            state.currentQuestionIndex = 0;
+            state.answers = {};
+            state.results = {};
+            
+            // Start with first subject
+            loadSubject(state.selectedSubjects[0]);
+            
+            // Start timer
+            startTimer();
+            
+            // Switch to quiz section
+            sections.subject.classList.remove('active-section');
+            sections.quiz.classList.add('active-section');
+        }
+
+        // Load a subject for the exam
+        function loadSubject(subjectId) {
+            const subject = subjects.find(s => s.id === subjectId);
+            if (!subject) return;
+            
+            // Update UI
+            document.getElementById('current-subject').textContent = subject.name;
+            document.getElementById('current-question').textContent = '1';
+            
+            // Load first question
+            loadQuestion(subject.name, 0);
+        }
+
+        // Load a question
+        function loadQuestion(subjectName, questionIndex) {
+            const subjectQuestions = questions[subjectName];
+            if (!subjectQuestions || questionIndex >= subjectQuestions.length) return;
+            
+            const question = subjectQuestions[questionIndex];
+            
+            // Update UI
+            document.getElementById('question-text').textContent = question.question;
+            document.getElementById('current-question').textContent = questionIndex + 1;
+            
+            // Render options
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            const letters = ['A', 'B', 'C', 'D'];
+            
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                if (state.answers[subjectName] && state.answers[subjectName][questionIndex] === index) {
+                    optionElement.classList.add('selected');
+                }
+                
+                optionElement.innerHTML = `
+                    <div class="option-letter">${letters[index]}</div>
+                    <div class="option-text">${option}</div>
+                `;
+                
+                optionElement.addEventListener('click', () => {
+                    // Remove selection from other options
+                    document.querySelectorAll('.option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    // Select this option
+                    optionElement.classList.add('selected');
+                    
+                    // Save answer
+                    if (!state.answers[subjectName]) {
+                        state.answers[subjectName] = [];
+                    }
+                    state.answers[subjectName][questionIndex] = index;
+                });
+                
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Update navigation buttons
+            document.getElementById('prev-question').disabled = questionIndex === 0;
+            document.getElementById('next-question').disabled = false;
+            document.getElementById('finish-subject').style.display = 
+                questionIndex === subjectQuestions.length - 1 ? 'block' : 'none';
+        }
+
+        // Go to previous question
+        function prevQuestion() {
+            if (state.currentQuestionIndex > 0) {
+                state.currentQuestionIndex--;
+                const subjectName = subjects.find(s => s.id === state.selectedSubjects[state.currentSubjectIndex]).name;
+                loadQuestion(subjectName, state.currentQuestionIndex);
+            }
+        }
+
+        // Go to next question
+        function nextQuestion() {
+            const subjectName = subjects.find(s => s.id === state.selectedSubjects[state.currentSubjectIndex]).name;
+            const subjectQuestions = questions[subjectName];
+            
+            if (state.currentQuestionIndex < subjectQuestions.length - 1) {
+                state.currentQuestionIndex++;
+                loadQuestion(subjectName, state.currentQuestionIndex);
+            }
+        }
+
+        // Finish current subject
+        function finishSubject() {
+            const subjectId = state.selectedSubjects[state.currentSubjectIndex];
+            const subject = subjects.find(s => s.id === subjectId);
+            const subjectName = subject.name;
+            
+            // Calculate score for this subject
+            const subjectAnswers = state.answers[subjectName] || [];
+            const subjectQuestions = questions[subjectName];
+            let score = 0;
+            
+            subjectAnswers.forEach((answerIndex, questionIndex) => {
+                if (answerIndex === subjectQuestions[questionIndex].answer) {
+                    score++;
+                }
+            });
+            
+            // Save result
+            state.results[subjectName] = score;
+            
+            // Move to next subject or finish exam
+            state.currentSubjectIndex++;
+            
+            if (state.currentSubjectIndex < state.selectedSubjects.length) {
+                // Load next subject
+                state.currentQuestionIndex = 0;
+                loadSubject(state.selectedSubjects[state.currentSubjectIndex]);
+                resetTimer();
+            } else {
+                // Exam finished
+                clearInterval(state.timer);
+                showResults();
+            }
+        }
+
+        // Start the timer
+        function startTimer() {
+            resetTimer();
+            updateTimerDisplay();
+            
+            state.timer = setInterval(() => {
+                state.timeRemaining--;
+                updateTimerDisplay();
+                
+                if (state.timeRemaining <= 0) {
+                    clearInterval(state.timer);
+                    finishSubject();
+                }
+            }, 1000);
+        }
+
+        // Reset the timer
+        function resetTimer() {
+            state.timeRemaining = 15 * 60; // 15 minutes
+            updateTimerDisplay();
+        }
+
+        // Update timer display
+        function updateTimerDisplay() {
+            const minutes = Math.floor(state.timeRemaining / 60);
+            const seconds = state.timeRemaining % 60;
+            document.getElementById('timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Show results
+        function showResults() {
+            // Update student details
+            document.getElementById('result-name').textContent = state.student.name;
+            document.getElementById('result-id').textContent = state.student.id;
+            document.getElementById('result-grade').textContent = 
+                `${state.student.grade} - ${state.student.section}`;
+            
+            // Calculate overall score
+            let totalScore = 0;
+            let maxScore = 0;
+            let subjectResultsHTML = '';
+            
+            Object.keys(state.results).forEach(subjectName => {
+                const score = state.results[subjectName];
+                totalScore += score;
+                maxScore += 5; // Each subject has 5 questions
+                
+                // Calculate percentage for progress bar
+                const percentage = (score / 5) * 100;
+                
+                subjectResultsHTML += `
+                    <div class="subject-result">
+                        <div class="subject-result-name">
+                            <i class="${subjects.find(s => s.name === subjectName).icon}"></i>
+                            ${subjectName}
+                        </div>
+                        <div class="subject-result-score">${score}/5</div>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            // Update UI
+            document.getElementById('overall-score').textContent = totalScore;
+            document.getElementById('percentage-score').textContent = 
+                `${Math.round((totalScore / maxScore) * 100)}%`;
+            document.getElementById('subject-results-container').innerHTML = subjectResultsHTML;
+            
+            // Update summary
+            document.getElementById('summary-count').textContent = state.selectedSubjects.length;
+            document.getElementById('summary-score').textContent = totalScore;
+            
+            // Determine performance
+            const performance = totalScore / maxScore;
+            let performanceText = '';
+            if (performance >= 0.8) performanceText = 'Excellent';
+            else if (performance >= 0.6) performanceText = 'Good';
+            else if (performance >= 0.5) performanceText = 'Satisfactory';
+            else performanceText = 'Needs Improvement';
+            
+            document.getElementById('summary-performance').textContent = performanceText;
+            
+            // Find strongest and weakest subjects
+            let strongestSubject = '';
+            let strongestScore = 0;
+            let weakestSubject = '';
+            let weakestScore = 5;
+            
+            Object.keys(state.results).forEach(subjectName => {
+                const score = state.results[subjectName];
+                if (score > strongestScore) {
+                    strongestScore = score;
+                    strongestSubject = subjectName;
+                }
+                if (score < weakestScore) {
+                    weakestScore = score;
+                    weakestSubject = subjectName;
+                }
+            });
+            
+            document.getElementById('summary-strong').textContent = strongestSubject;
+            document.getElementById('summary-weak').textContent = weakestSubject;
+            
+            // Show results section
+            sections.quiz.classList.remove('active-section');
+            sections.result.classList.add('active-section');
+        }
+
+        // Restart the exam
+        function restartExam() {
+            // Clear state
+            state.selectedSubjects = [];
+            state.answers = {};
+            state.results = {};
+            
+            // Reset UI
+            document.querySelectorAll('.subject-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.getElementById('selected-count').textContent = '0';
+            document.getElementById('start-exam').disabled = true;
+            
+            // Go back to student section
+            sections.result.classList.remove('active-section');
+            sections.student.classList.add('active-section');
+        }
+
+        // Download results as Excel
+        function downloadExcel() {
+            // Create workbook
+            const wb = XLSX.utils.book_new();
+            
+            // Create student details sheet
+            const studentData = [
+                ['School Name', 'Prestige Academy'],
+                ['Address', '123 Education Boulevard, Academic City'],
+                ['Student Name', state.student.name],
+                ['Student ID', state.student.id],
+                ['Grade/Class', state.student.grade],
+                ['Section', state.student.section],
+                ['Date', new Date().toLocaleDateString()],
+                [],
+                ['Subject', 'Score', 'Percentage']
+            ];
+            
+            // Add subject results
+            let totalScore = 0;
+            let maxScore = 0;
+            
+            Object.keys(state.results).forEach(subjectName => {
+                const score = state.results[subjectName];
+                totalScore += score;
+                maxScore += 5;
+                
+                studentData.push([
+                    subjectName,
+                    `${score}/5`,
+                    `${Math.round((score / 5) * 100)}%`
+                ]);
+            });
+            
+            // Add summary
+            studentData.push([]);
+            studentData.push(['Total Score', `${totalScore}/${maxScore}`]);
+            studentData.push(['Overall Percentage', `${Math.round((totalScore / maxScore) * 100)}%`]);
+            
+            // Create worksheet
+            const ws = XLSX.utils.aoa_to_sheet(studentData);
+            
+            // Add worksheet to workbook
+            XLSX.utils.book_append_sheet(wb, ws, 'Exam Results');
+            
+            // Download the file
+            XLSX.writeFile(wb, `Exam_Results_${state.student.name.replace(' ', '_')}.xlsx`);
+        }
+
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>

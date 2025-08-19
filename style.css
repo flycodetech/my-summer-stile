@@ -1,0 +1,22 @@
+body{
+    background-color: aqua;
+    margin: 0%;
+    padding: 0%;
+}
+h1{
+    text-align: center;
+    color: rgb(197, 9, 9);
+    padding-top: 210px;
+}
+.box{
+    margin-top: 0%;
+    height:300px;
+    width: auto;
+    background-color: black;
+    background-image: url(./song\ of\ the\ saints);
+}
+nav{
+    background-color: black;
+    height: 100px;
+    justify-content: space-between;
+}
